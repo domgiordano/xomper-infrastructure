@@ -2,7 +2,7 @@
 
 data "aws_route53_zone" "web_zone"{
     private_zone = false
-    zone_id = "Z029755811OS3QFPFETU7"
+    zone_id = "Z01260602CUU5TGLREF7"
 }
 
 resource "aws_route53_record" "web_app" {
