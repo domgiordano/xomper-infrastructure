@@ -72,7 +72,7 @@ resource "aws_kms_alias" "web_app" {
   target_key_id = aws_kms_key.web_app.key_id
 }
 
-resource "aws_kms_alias" "dynamodb" {
-  name          = "alias/dynamodb"
+resource "aws_kms_alias" "xomper_dynamodb" {
+  name          = "alias/xomper-dynamodb"
   target_key_id = aws_kms_key.web_app.key_id
 }
