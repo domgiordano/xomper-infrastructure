@@ -70,3 +70,24 @@ variable "enable_cloudfront_cache" {
   default     = true
   description = "This variable controls the cloudfront cache. Setting this to false will set the default_ttl and max_ttl values to zero"
 }
+# Lambda
+variable "lambda_runtime" {
+  type = string
+  default = "python3.10"
+}
+
+variable "lambda_trace_mode"{
+  type = string
+  default = "Active"
+}
+
+#API
+variable  api_access_token {
+  description = "API access token"
+  sensitive   = true
+}
+
+variable "api_secret_key" {
+  description = "API Secret Key for FE / BE to use"
+  sensitive = true
+}
