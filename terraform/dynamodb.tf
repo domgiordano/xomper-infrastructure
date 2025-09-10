@@ -7,7 +7,7 @@ resource "aws_dynamodb_table" "player_data"{
 
     server_side_encryption {
       enabled = true
-      kms_key_arn = aws_kms_alias.dynamodb.target_key_arn
+      kms_key_arn = aws_kms_alias.xomper_dynamodb.target_key_arn
     }
 
     point_in_time_recovery {
