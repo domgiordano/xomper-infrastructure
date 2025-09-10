@@ -71,3 +71,8 @@ resource "aws_kms_alias" "web_app" {
   name          = "alias/kms-for-${var.app_name}"
   target_key_id = aws_kms_key.web_app.key_id
 }
+
+resource "aws_kms_alias" "dynamodb" {
+  name          = "alias/dynamodb"
+  target_key_id = aws_kms_key.web_app.key_id
+}
