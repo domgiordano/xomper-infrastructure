@@ -16,10 +16,9 @@ resource "aws_cloudwatch_log_group" "api_log_group" {
 ## CHRON JOB - WRAPPED
 resource "aws_cloudwatch_event_rule" "update_player_data_schedule" {
   name        ="${var.app_name}-update-player-data-schedule"
-  description = "Trigger Wrapped Lambda function on the first day of every month"
-  schedule_expression = "cron(0 6 * * 2,4,6)"  # Runs at midnight on the first day of every month
+  description = "Trigger Update Player Data Lambda function every Tuesday at 6 AM ET"
+  schedule_expression = "cron(0 10 ? * 3 *)"
 }
-
 resource "aws_cloudwatch_event_target" "update_player_data_target" {
   rule      = aws_cloudwatch_event_rule.update_player_data_schedule.name
   target_id = "${var.app_name}-update-player-data-target-id"
