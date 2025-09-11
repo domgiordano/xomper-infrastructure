@@ -61,7 +61,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   }
 
   response_templates = {
-    "application/json" : local.cors_vtl
+    "application/json" : "{ \"statusCode\": 200 }"
   }
 
   resource_id = local.resource_id
