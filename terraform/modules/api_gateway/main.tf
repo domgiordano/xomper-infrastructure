@@ -56,7 +56,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
     "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'${local.origins_list[0]}'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'${local.allow_origin}'"
     "method.response.header.Access-Control-Allow-Credentials"  = "'true'"
   }
 
