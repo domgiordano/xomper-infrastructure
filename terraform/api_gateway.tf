@@ -132,7 +132,7 @@ module "get_player_data_endpoint" {
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
   allow_origin            = "*"
-  modify_api_resource     = true
+  modify_api_resource     = false
 }
 
 resource "aws_lambda_permission" "get_user_table_data_post_permission"{
