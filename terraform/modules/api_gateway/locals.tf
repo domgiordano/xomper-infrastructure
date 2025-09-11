@@ -1,4 +1,5 @@
 locals {
+  allow_origin = "https://xomper.com" # only your frontend domain
   origins_list = split(",", var.allow_origin)
   cors_vtl = length(local.origins_list) > 1 ? join("\n", [
    "#set($origin = $input.params().header.get(\"Origin\"))",
