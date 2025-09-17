@@ -13,6 +13,7 @@ locals {
    APP_NAME = var.app_name
    DYNAMODB_KMS_ALIAS = aws_kms_alias.xomper_dynamodb.name
    PLAYER_DATA_TABLE_NAME = aws_dynamodb_table.player_data.id
+   USER_DATA_TABLE_NAME = aws_dynamodb_table.user_data.id
    AWS_ACCOUNT_ID = data.aws_caller_identity.web_app_account.account_id
  }
 
