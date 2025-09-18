@@ -191,3 +191,141 @@ resource "aws_lambda_function" "get_user_data" {
     aws_iam_role.lambda_role
   ]
 }
+
+resource "aws_lambda_function" "user_login" {
+
+  function_name     = "${var.app_name}-user-login"
+  filename          = "./templates/lambda_stub.zip"
+  source_code_hash  = filebase64sha256("./templates/lambda_stub.zip")
+  handler           = "handler.handler"
+  layers            = [aws_lambda_layer_version.lambda_layer.arn]
+  runtime           = var.lambda_runtime
+  memory_size       = 1024
+  timeout           = 900
+  role              = aws_iam_role.lambda_role.arn
+  environment {
+    variables = local.lambda_variables
+  }
+
+  vpc_config {
+    subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+    security_group_ids = [aws_security_group.lambda_sg.id]
+  }
+
+  tags = merge(local.standard_tags, tomap({"name" = "${var.app_name}-user-login"}))
+
+
+
+  tracing_config {
+    mode = var.lambda_trace_mode
+  }
+
+
+
+  lifecycle {
+    ignore_changes = [
+      description,
+      filename,
+      source_code_hash,
+      layers
+    ]
+  }
+
+  depends_on = [
+    aws_iam_role_policy.lambda_role_policy,
+    aws_iam_role.lambda_role
+  ]
+}
+
+##############################
+##       LEAGUE DATA        ##
+##############################
+resource "aws_lambda_function" "update_league_data" {
+
+  function_name     = "${var.app_name}-update-league-data"
+  filename          = "./templates/lambda_stub.zip"
+  source_code_hash  = filebase64sha256("./templates/lambda_stub.zip")
+  handler           = "handler.handler"
+  layers            = [aws_lambda_layer_version.lambda_layer.arn]
+  runtime           = var.lambda_runtime
+  memory_size       = 1024
+  timeout           = 900
+  role              = aws_iam_role.lambda_role.arn
+  environment {
+    variables = local.lambda_variables
+  }
+
+  vpc_config {
+    subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+    security_group_ids = [aws_security_group.lambda_sg.id]
+  }
+
+  tags = merge(local.standard_tags, tomap({"name" = "${var.app_name}-update-league-data"}))
+
+
+
+  tracing_config {
+    mode = var.lambda_trace_mode
+  }
+
+
+
+  lifecycle {
+    ignore_changes = [
+      description,
+      filename,
+      source_code_hash,
+      layers
+    ]
+  }
+
+  depends_on = [
+    aws_iam_role_policy.lambda_role_policy,
+    aws_iam_role.lambda_role
+  ]
+}
+
+resource "aws_lambda_function" "get_league_data" {
+
+  function_name     = "${var.app_name}-get-league-data"
+  filename          = "./templates/lambda_stub.zip"
+  source_code_hash  = filebase64sha256("./templates/lambda_stub.zip")
+  handler           = "handler.handler"
+  layers            = [aws_lambda_layer_version.lambda_layer.arn]
+  runtime           = var.lambda_runtime
+  memory_size       = 1024
+  timeout           = 900
+  role              = aws_iam_role.lambda_role.arn
+  environment {
+    variables = local.lambda_variables
+  }
+
+  vpc_config {
+    subnet_ids         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+    security_group_ids = [aws_security_group.lambda_sg.id]
+  }
+
+  tags = merge(local.standard_tags, tomap({"name" = "${var.app_name}-get-league-data"}))
+
+
+
+  tracing_config {
+    mode = var.lambda_trace_mode
+  }
+
+
+
+  lifecycle {
+    ignore_changes = [
+      description,
+      filename,
+      source_code_hash,
+      layers
+    ]
+  }
+
+  depends_on = [
+    aws_iam_role_policy.lambda_role_policy,
+    aws_iam_role.lambda_role
+  ]
+}
