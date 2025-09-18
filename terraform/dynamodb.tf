@@ -29,7 +29,6 @@ resource "aws_dynamodb_table" "user_data"{
     read_capacity = 0
     write_capacity = 0
     hash_key = "user_id"
-    range_key = "league_id"
 
     server_side_encryption {
       enabled = true
@@ -42,10 +41,6 @@ resource "aws_dynamodb_table" "user_data"{
 
     attribute {
         name = "user_id"
-        type = "S"
-    }
-    attribute {
-        name = "league_id"
         type = "S"
     }
 
