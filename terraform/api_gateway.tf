@@ -20,7 +20,7 @@ resource "aws_api_gateway_gateway_response" "api_server_error_response" {
   }
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin"      = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"      = "'https://xomper.com'"
     "gatewayresponse.header.Access-Control-Allow-Headers"     = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "gatewayresponse.header.Access-Control-Allow-Methods"     = "'GET,POST,OPTIONS'"
     "gatewayresponse.header.Access-Control-Allow-Credentials" = "'true'"
@@ -54,14 +54,14 @@ module "get_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 module "post_player_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = module.get_player_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
+  modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
   allow_headers           = local.api_allow_headers
@@ -71,23 +71,7 @@ module "post_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
-}
-
-module "options_player_data_endpoint" {
-  source                  = "./modules/api_gateway"
-  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_player_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
-  http_method             = "OPTIONS"
-  allow_methods           = ["OPTIONS", "GET", "POST"]
-  allow_headers           = local.api_allow_headers
-  integration_type        = "MOCK"
-  integration_http_method = "OPTIONS"
-  uri                     = ""
-  authorization           = "NONE"
-  standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 #*************************
@@ -115,14 +99,14 @@ module "get_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 module "post_user_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = module.get_user_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
+  modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
   allow_headers           = local.api_allow_headers
@@ -132,23 +116,7 @@ module "post_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
-}
-
-module "options_user_data_endpoint" {
-  source                  = "./modules/api_gateway"
-  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_user_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
-  http_method             = "OPTIONS"
-  allow_methods           = ["OPTIONS", "GET", "POST"]
-  allow_headers           = local.api_allow_headers
-  integration_type        = "MOCK"
-  integration_http_method = "OPTIONS"
-  uri                     = ""
-  authorization           = "NONE"
-  standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 #*************************
@@ -176,14 +144,14 @@ module "get_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 module "post_league_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = module.get_league_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
+  modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
   allow_headers           = local.api_allow_headers
@@ -193,23 +161,7 @@ module "post_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "*"
-}
-
-module "options_league_data_endpoint" {
-  source                  = "./modules/api_gateway"
-  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_league_data_endpoint.api_gateway_resource_id
-  modify_api_resource     = true
-  http_method             = "OPTIONS"
-  allow_methods           = ["OPTIONS", "GET", "POST"]
-  allow_headers           = local.api_allow_headers
-  integration_type        = "MOCK"
-  integration_http_method = "OPTIONS"
-  uri                     = ""
-  authorization           = "NONE"
-  standard_tags           = local.standard_tags
-  allow_origin            = "*"
+  allow_origin            = "https://xomper.com,http://localhost:4200"
 }
 
 #*************************
@@ -234,15 +186,12 @@ resource "aws_api_gateway_deployment" "api_deploy" {
     aws_api_gateway_resource.player_resource,
     module.get_player_data_endpoint,
     module.post_player_data_endpoint,
-    module.options_player_data_endpoint,
     aws_api_gateway_resource.user_resource,
     module.get_user_data_endpoint,
     module.post_user_data_endpoint,
-    module.options_user_data_endpoint,
     aws_api_gateway_resource.league_resource,
     module.get_league_data_endpoint,
-    module.post_league_data_endpoint,
-    module.options_league_data_endpoint
+    module.post_league_data_endpoint
   ]
 }
 
