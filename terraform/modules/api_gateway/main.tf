@@ -79,10 +79,11 @@ resource "aws_api_gateway_method" "options" {
 }
 
 resource "aws_api_gateway_integration" "options_integration" {
-  rest_api_id             = var.rest_api_id
-  resource_id             = aws_api_gateway_method.options.resource_id
-  http_method             = aws_api_gateway_method.options.http_method
-  type                    = "MOCK"
+  count                  = var.enable_cors ? 1 : 0
+  rest_api_id            = var.rest_api_id
+  resource_id            = aws_api_gateway_method.options[0].resource_id
+  http_method            = aws_api_gateway_method.options[0].http_method
+  type                   = "MOCK"
   integration_http_method = "OPTIONS"
 
   request_templates = {
@@ -94,9 +95,10 @@ resource "aws_api_gateway_integration" "options_integration" {
 }
 
 resource "aws_api_gateway_method_response" "options_response" {
+  count       = var.enable_cors ? 1 : 0
   rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.options.resource_id
-  http_method = aws_api_gateway_method.options.http_method
+  resource_id = aws_api_gateway_method.options[0].resource_id
+  http_method = aws_api_gateway_method.options[0].http_method
   status_code = "200"
 
   response_models = {
@@ -111,10 +113,11 @@ resource "aws_api_gateway_method_response" "options_response" {
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
+  count       = var.enable_cors ? 1 : 0
   rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.options.resource_id
-  http_method = aws_api_gateway_method.options.http_method
-  status_code = aws_api_gateway_method_response.options_response.status_code
+  resource_id = aws_api_gateway_method.options[0].resource_id
+  http_method = aws_api_gateway_method.options[0].http_method
+  status_code = aws_api_gateway_method_response.options_response[0].status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
