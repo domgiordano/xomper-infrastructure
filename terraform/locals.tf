@@ -20,6 +20,6 @@ locals {
 
  # API GW
  api_allow_headers = ["Authorization", "Content-Type", "X-Amz-Date", "X-Amz-Security-Token", "X-Api-Key", "Origin", "Accept", "Access-Control-Allow-Origin", "Accept-Language"]
-
+ api_allow_origin  = "https://xomper.com,http://localhost:4200"
 
 }

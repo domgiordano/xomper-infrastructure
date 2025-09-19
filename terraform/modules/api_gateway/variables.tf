@@ -129,6 +129,11 @@ variable "response_templates" {
 # -------------------
 # CORS settings
 # -------------------
+variable "enable_cors" {
+  description = "Whether to create OPTIONS method for CORS"
+  type        = bool
+  default     = true
+}
 variable "allow_headers" {
   description = "CORS: Access-Control-Allow-Headers values."
   type        = list(string)
