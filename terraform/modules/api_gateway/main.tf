@@ -126,14 +126,7 @@ resource "aws_api_gateway_integration_response" "api_gateway_integration_respons
     "application/json" = local.cors_vtl
   }
 
-  response_parameters = {
-    # Optional fallback if VTL fails
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'" 
-  }
-
   resource_id = local.resource_id
   rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_integration.api_gateway_integration, aws_api_gateway_method.api_gateway_method, aws_api_gateway_method_response.api_gateway_method_response]
+  depends_on  = [aws_api_gateway_integration.api_gateway_integration]
 }
