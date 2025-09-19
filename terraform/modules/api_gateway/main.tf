@@ -120,13 +120,20 @@ resource "aws_api_gateway_method_response" "api_gateway_method_response" {
 }
 
 resource "aws_api_gateway_integration_response" "api_gateway_integration_response" { 
-  http_method        = aws_api_gateway_method.api_gateway_method.http_method
-  status_code        = aws_api_gateway_method_response.api_gateway_method_response.status_code
+  http_method = aws_api_gateway_method.api_gateway_method.http_method
+  status_code = aws_api_gateway_method_response.api_gateway_method_response.status_code
+
   response_templates = {
     "application/json" = local.cors_vtl
   }
 
+  # Pass through instead of overriding
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "integration.response.header.Access-Control-Allow-Origin"
+    "method.response.header.Access-Control-Allow-Methods" = "integration.response.header.Access-Control-Allow-Methods"
+    "method.response.header.Access-Control-Allow-Headers" = "integration.response.header.Access-Control-Allow-Headers"
+  }
+
   resource_id = local.resource_id
   rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_integration.api_gateway_integration]
 }
