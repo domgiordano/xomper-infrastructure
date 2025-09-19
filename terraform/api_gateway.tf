@@ -125,7 +125,6 @@ module "post_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
   allow_origin            = local.api_allow_origin
   enable_cors             = false
 }
