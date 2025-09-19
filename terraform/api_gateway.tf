@@ -36,19 +36,20 @@ resource "aws_api_gateway_gateway_response" "api_server_error_response" {
 }
 
 #*************************
-# Player Data
+# Player Endpoints
 #*************************
 
-resource "aws_api_gateway_resource" "player_resource" {
+# /get-player
+resource "aws_api_gateway_resource" "player_get_resource" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
-  path_part   = "player"
+  path_part   = "get-player"
 }
 
 module "get_player_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = aws_api_gateway_resource.player_resource.id
+  parent_resource_id      = aws_api_gateway_resource.player_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -59,14 +60,21 @@ module "get_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
+  allow_origin            = "https://xomper.com"
   enable_cors             = true
+}
+
+# /update-player
+resource "aws_api_gateway_resource" "player_update_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "update-player"
 }
 
 module "post_player_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_player_data_endpoint.api_gateway_resource_id
+  parent_resource_id      = aws_api_gateway_resource.player_update_resource.id
   modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
@@ -77,42 +85,26 @@ module "post_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
-  enable_cors             = false
+  allow_origin            = "https://xomper.com"
+  enable_cors             = true
 }
 
 #*************************
-# Login
-#*************************
+# Login Endpoints
+#*************************f
 
-resource "aws_api_gateway_resource" "login_resource" {
+
+# /login
+resource "aws_api_gateway_resource" "login_post_resource" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
   path_part   = "login"
 }
 
-module "get_login_data_endpoint" {
-  source                  = "./modules/api_gateway"
-  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = aws_api_gateway_resource.login_resource.id
-  modify_api_resource     = false
-  http_method             = "GET"
-  allow_methods           = ["GET"]
-  allow_headers           = local.api_allow_headers
-  integration_type        = "AWS_PROXY"
-  integration_http_method = "POST"
-  uri                     = aws_lambda_function.user_login.invoke_arn
-  authorization           = "CUSTOM"
-  authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
-  standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
-  enable_cors             = true
-}
-
 module "post_login_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_login_data_endpoint.api_gateway_resource_id
+  parent_resource_id      = aws_api_gateway_resource.login_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
@@ -123,24 +115,25 @@ module "post_login_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
-  enable_cors             = false
+  allow_origin            = "https://xomper.com"
+  enable_cors             = true
 }
 
 #*************************
-# User Data
+# User Endpoints
 #*************************
 
-resource "aws_api_gateway_resource" "user_resource" {
+# /get-user
+resource "aws_api_gateway_resource" "user_get_resource" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
-  path_part   = "user"
+  path_part   = "get-user"
 }
 
 module "get_user_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = aws_api_gateway_resource.user_resource.id
+  parent_resource_id      = aws_api_gateway_resource.user_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -151,14 +144,21 @@ module "get_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
+  allow_origin            = "https://xomper.com"
   enable_cors             = true
+}
+
+# /update-user
+resource "aws_api_gateway_resource" "user_post_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "update-user"
 }
 
 module "post_user_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_user_data_endpoint.api_gateway_resource_id
+  parent_resource_id      = aws_api_gateway_resource.user_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
@@ -169,24 +169,25 @@ module "post_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
-  enable_cors             = false
+  allow_origin            = "https://xomper.com"
+  enable_cors             = true
 }
 
 #*************************
-# League Data
+# League Endpoints
 #*************************
 
-resource "aws_api_gateway_resource" "league_resource" {
+# /get-league
+resource "aws_api_gateway_resource" "league_get_resource" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
-  path_part   = "league"
+  path_part   = "get-league"
 }
 
 module "get_league_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = aws_api_gateway_resource.league_resource.id
+  parent_resource_id      = aws_api_gateway_resource.league_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -197,14 +198,21 @@ module "get_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
+  allow_origin            = "https://xomper.com"
   enable_cors             = true
+}
+
+# /update-league
+resource "aws_api_gateway_resource" "league_post_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "update-league"
 }
 
 module "post_league_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = module.get_league_data_endpoint.api_gateway_resource_id
+  parent_resource_id      = aws_api_gateway_resource.league_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
@@ -215,8 +223,8 @@ module "post_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  # allow_origin            = local.api_allow_origin
-  enable_cors             = false
+  allow_origin            = "https://xomper.com"
+  enable_cors             = true
 }
 
 #*************************
@@ -238,17 +246,19 @@ resource "aws_api_gateway_deployment" "api_deploy" {
   }
 
   depends_on = [
-    aws_api_gateway_resource.player_resource,
+    aws_api_gateway_resource.player_get_resource,
+    aws_api_gateway_resource.player_post_resource,
     module.get_player_data_endpoint,
     module.post_player_data_endpoint,
-    aws_api_gateway_resource.user_resource,
+    aws_api_gateway_resource.user_get_resource,
+    aws_api_gateway_resource.user_post_resource,
     module.get_user_data_endpoint,
     module.post_user_data_endpoint,
-    aws_api_gateway_resource.league_resource,
+    aws_api_gateway_resource.league_get_resource,
+    aws_api_gateway_resource.league_post_resource,
     module.get_league_data_endpoint,
     module.post_league_data_endpoint,
-    aws_api_gateway_resource.login_resource,
-    module.get_login_data_endpoint,
+    aws_api_gateway_resource.login_post_resource,
     module.post_login_data_endpoint
   ]
 }

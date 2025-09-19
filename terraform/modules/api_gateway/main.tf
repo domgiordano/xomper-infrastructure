@@ -1,5 +1,5 @@
 # ---------------------------------------------------------
-# Resource (optional)
+# API Gateway Resource (optional)
 # ---------------------------------------------------------
 resource "aws_api_gateway_resource" "api_resource" {
   count       = var.modify_api_resource ? 1 : 0
@@ -8,8 +8,12 @@ resource "aws_api_gateway_resource" "api_resource" {
   path_part   = coalesce(var.path_part, lower(var.http_method))
 }
 
+locals {
+  resource_id = var.modify_api_resource ? aws_api_gateway_resource.api_resource[0].id : var.parent_resource_id
+}
+
 # ---------------------------------------------------------
-# Method (GET/POST)
+# Main Method (GET/POST)
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = var.rest_api_id
@@ -32,14 +36,11 @@ resource "aws_api_gateway_integration" "integration" {
   content_handling        = "CONVERT_TO_TEXT"
 }
 
-# ---------------------------------------------------------
-# Method Response + Integration Response
-# ---------------------------------------------------------
 resource "aws_api_gateway_method_response" "method_response" {
-  rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.method.resource_id
-  http_method = aws_api_gateway_method.method.http_method
-  status_code = var.response_http_status_code
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_method.method.resource_id
+  http_method   = aws_api_gateway_method.method.http_method
+  status_code   = var.response_http_status_code
 
   response_models = {
     "application/json" = var.response_model
@@ -53,29 +54,29 @@ resource "aws_api_gateway_method_response" "method_response" {
 }
 
 resource "aws_api_gateway_integration_response" "integration_response" {
-  rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.method.resource_id
-  http_method = aws_api_gateway_method.method.http_method
-  status_code = aws_api_gateway_method_response.method_response.status_code
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_method.method.resource_id
+  http_method   = aws_api_gateway_method.method.http_method
+  status_code   = aws_api_gateway_method_response.method_response.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${var.http_method}'"
   }
 
   response_templates = var.response_templates
 }
 
 # ---------------------------------------------------------
-# OPTIONS (CORS Preflight)
+# OPTIONS Preflight for this Method
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "options" {
-  count         = var.enable_cors ? 1 : 0
   rest_api_id   = var.rest_api_id
   resource_id   = local.resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
+  count         = var.enable_cors ? 1 : 0
 }
 
 resource "aws_api_gateway_integration" "options_integration" {
@@ -122,6 +123,6 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${var.http_method}'"
   }
 }
