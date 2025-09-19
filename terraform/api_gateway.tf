@@ -3,8 +3,8 @@
 #*************************
 
 resource "aws_api_gateway_rest_api" "api_gateway" {
-  name        = "XomifyAPI"
-  description = "Xomify API Gateway"
+  name        = "xomper-api"
+  description = "Xomper API Gateway"
   tags        = local.standard_tags
 }
 
