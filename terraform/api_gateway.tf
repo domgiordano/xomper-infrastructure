@@ -3,9 +3,15 @@
 #*************************
 
 resource "aws_api_gateway_rest_api" "api_gateway" {
-  name        = "xomper-api"
-  description = "Xomper API Gateway"
-  tags        = local.standard_tags
+  name                     = "${var.app_name}-api"
+  description              = "API Gateway for ${var.app_name}"
+  binary_media_types       = ["multipart/form-data"]
+  minimum_compression_size = 5242880
+  tags                     = merge(local.standard_tags, tomap({"name" = "${var.app_name}-api-gateway"}))
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 #*************************
