@@ -49,7 +49,6 @@ module "get_player_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = aws_api_gateway_resource.player_resource.id
-  path_part               = "data"
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -96,7 +95,6 @@ module "get_login_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = aws_api_gateway_resource.login_resource.id
-  path_part               = "data"
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -143,7 +141,6 @@ module "get_user_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = aws_api_gateway_resource.user_resource.id
-  path_part               = "data"
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
@@ -190,7 +187,6 @@ module "get_league_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
   parent_resource_id      = aws_api_gateway_resource.league_resource.id
-  path_part               = "data"
   modify_api_resource     = false
   http_method             = "GET"
   allow_methods           = ["GET"]
