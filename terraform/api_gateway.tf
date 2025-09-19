@@ -83,6 +83,53 @@ module "post_player_data_endpoint" {
 }
 
 #*************************
+# Login
+#*************************
+
+resource "aws_api_gateway_resource" "login_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
+  path_part   = "login"
+}
+
+module "get_login_data_endpoint" {
+  source                  = "./modules/api_gateway"
+  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
+  parent_resource_id      = aws_api_gateway_resource.api_gateway.id
+  path_part               = "data"
+  modify_api_resource     = false
+  http_method             = "GET"
+  allow_methods           = ["GET"]
+  allow_headers           = local.api_allow_headers
+  integration_type        = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.user_login.invoke_arn
+  authorization           = "CUSTOM"
+  authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
+  standard_tags           = local.standard_tags
+  allow_origin            = local.api_allow_origin
+  enable_cors             = true
+}
+
+module "post_login_data_endpoint" {
+  source                  = "./modules/api_gateway"
+  rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
+  parent_resource_id      = module.get_login_data_endpoint.api_gateway_resource_id
+  modify_api_resource     = false
+  http_method             = "POST"
+  allow_methods           = ["POST"]
+  allow_headers           = local.api_allow_headers
+  integration_type        = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri                     = aws_lambda_function.user_login.invoke_arn
+  authorization           = "CUSTOM"
+  authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
+  standard_tags           = local.standard_tags
+  allow_origin            = local.api_allow_origin
+  enable_cors             = false
+}
+
+#*************************
 # User Data
 #*************************
 
@@ -203,7 +250,10 @@ resource "aws_api_gateway_deployment" "api_deploy" {
     module.post_user_data_endpoint,
     aws_api_gateway_resource.league_resource,
     module.get_league_data_endpoint,
-    module.post_league_data_endpoint
+    module.post_league_data_endpoint,
+    aws_api_gateway_resource.login_resource,
+    module.get_login_data_endpoint,
+    module.post_login_data_endpoint
   ]
 }
 
