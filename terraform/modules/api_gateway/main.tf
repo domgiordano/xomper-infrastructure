@@ -54,14 +54,14 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   status_code = 200
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'${local.origins_list[0]}'"
-    "method.response.header.Access-Control-Allow-Credentials"  = "'true'"
+    # Optional fallback if VTL fails
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'" 
   }
 
   response_templates = {
-    "application/json" : local.cors_vtl
+    "application/json" = local.cors_vtl
   }
 
   resource_id = local.resource_id
@@ -122,13 +122,17 @@ resource "aws_api_gateway_method_response" "api_gateway_method_response" {
 resource "aws_api_gateway_integration_response" "api_gateway_integration_response" { 
   http_method        = aws_api_gateway_method.api_gateway_method.http_method
   status_code        = aws_api_gateway_method_response.api_gateway_method_response.status_code
-  response_templates = var.response_templates
+  response_templates = {
+    "application/json" = local.cors_vtl
+  }
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'${local.origins_list[0]}'"
+    # Optional fallback if VTL fails
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'" 
   }
+
   resource_id = local.resource_id
   rest_api_id = var.rest_api_id
   depends_on  = [aws_api_gateway_integration.api_gateway_integration, aws_api_gateway_method.api_gateway_method, aws_api_gateway_method_response.api_gateway_method_response]
