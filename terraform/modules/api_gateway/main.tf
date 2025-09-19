@@ -13,7 +13,7 @@ resource "aws_api_gateway_resource" "api_resource" {
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = var.rest_api_id
-  resource_id   = var.modify_api_resource ? aws_api_gateway_resource.api_resource[0].id : var.parent_resource_id
+  resource_id   = local.resource_id
   http_method   = var.http_method
   authorization = var.authorization
   authorizer_id = var.authorization == "CUSTOM" ? var.authorizer_id : null
@@ -26,6 +26,10 @@ resource "aws_api_gateway_integration" "integration" {
   integration_http_method = var.integration_http_method
   type                    = var.integration_type
   uri                     = var.uri
+  request_templates       = var.request_templates
+  credentials             = var.integration_credentials
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  content_handling        = "CONVERT_TO_TEXT"
 }
 
 # ---------------------------------------------------------
@@ -35,10 +39,10 @@ resource "aws_api_gateway_method_response" "method_response" {
   rest_api_id = var.rest_api_id
   resource_id = aws_api_gateway_method.method.resource_id
   http_method = aws_api_gateway_method.method.http_method
-  status_code = "200"
+  status_code = var.response_http_status_code
 
   response_models = {
-    "application/json" = "Empty"
+    "application/json" = var.response_model
   }
 
   response_parameters = {
@@ -59,6 +63,8 @@ resource "aws_api_gateway_integration_response" "integration_response" {
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
     "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
   }
+
+  response_templates = var.response_templates
 }
 
 # ---------------------------------------------------------
@@ -66,7 +72,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "options" {
   rest_api_id   = var.rest_api_id
-  resource_id   = aws_api_gateway_method.method.resource_id
+  resource_id   = local.resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
@@ -81,6 +87,9 @@ resource "aws_api_gateway_integration" "options_integration" {
   request_templates = {
     "application/json" = "{ \"statusCode\": 200 }"
   }
+
+  passthrough_behavior = "WHEN_NO_MATCH"
+  content_handling     = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_method_response" "options_response" {
