@@ -71,6 +71,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
 # OPTIONS (CORS Preflight)
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "options" {
+  count         = var.enable_cors ? 1 : 0
   rest_api_id   = var.rest_api_id
   resource_id   = local.resource_id
   http_method   = "OPTIONS"

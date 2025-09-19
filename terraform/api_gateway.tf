@@ -60,7 +60,8 @@ module "get_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = true
 }
 
 module "post_player_data_endpoint" {
@@ -77,7 +78,8 @@ module "post_player_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = false
 }
 
 #*************************
@@ -105,7 +107,8 @@ module "get_user_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = true
 }
 
 module "post_user_data_endpoint" {
@@ -123,6 +126,8 @@ module "post_user_data_endpoint" {
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
   allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = false
 }
 
 #*************************
@@ -150,7 +155,8 @@ module "get_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = true
 }
 
 module "post_league_data_endpoint" {
@@ -167,7 +173,8 @@ module "post_league_data_endpoint" {
   authorization           = "CUSTOM"
   authorizer_id           = aws_api_gateway_authorizer.lambda_authorizer.id
   standard_tags           = local.standard_tags
-  allow_origin            = "https://xomper.com,http://localhost:4200"
+  allow_origin            = local.api_allow_origin
+  enable_cors             = false
 }
 
 #*************************
