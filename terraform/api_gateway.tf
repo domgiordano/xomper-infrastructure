@@ -65,7 +65,7 @@ module "get_player_data_endpoint" {
 }
 
 # /update-player
-resource "aws_api_gateway_resource" "player_update_resource" {
+resource "aws_api_gateway_resource" "player_post_resource" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
   path_part   = "update-player"
@@ -74,7 +74,7 @@ resource "aws_api_gateway_resource" "player_update_resource" {
 module "post_player_data_endpoint" {
   source                  = "./modules/api_gateway"
   rest_api_id             = aws_api_gateway_rest_api.api_gateway.id
-  parent_resource_id      = aws_api_gateway_resource.player_update_resource.id
+  parent_resource_id      = aws_api_gateway_resource.player_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
   allow_methods           = ["POST"]
