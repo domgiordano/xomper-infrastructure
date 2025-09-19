@@ -1,132 +1,114 @@
-# Setting up resource, method, integration, method response, and integration response
-resource "aws_api_gateway_resource" "api_gateway_resource" {
-  count       = var.modify_api_resource ? 0 : 1
-  parent_id   = var.parent_resource_id
-  path_part   = var.path_part
+# ---------------------------------------------------------
+# Resource (optional)
+# ---------------------------------------------------------
+resource "aws_api_gateway_resource" "api_resource" {
+  count       = var.modify_api_resource ? 1 : 0
   rest_api_id = var.rest_api_id
-} 
-
-##### CORS #####
-resource "aws_api_gateway_method" "options_method" {
-  count            = var.modify_api_resource ? 0 : 1
-  authorization    = "NONE"
-  http_method      = "OPTIONS"
-  resource_id      = local.resource_id
-  rest_api_id      = var.rest_api_id
+  parent_id   = var.parent_resource_id
+  path_part   = coalesce(var.path_part, lower(var.http_method))
 }
 
-resource "aws_api_gateway_integration" "options_integration" {
-  count             = var.modify_api_resource ? 0 : 1
-  http_method       = aws_api_gateway_method.options_method[0].http_method
-  type              = "MOCK"
-  request_templates = {
-    "application/json" : "{ \"statusCode\": 200 }"
-  }
-  content_handling = "CONVERT_TO_TEXT"
-  resource_id      = local.resource_id
-  rest_api_id      = var.rest_api_id
-  depends_on       = [aws_api_gateway_method.options_method]
+# ---------------------------------------------------------
+# Method (GET/POST)
+# ---------------------------------------------------------
+resource "aws_api_gateway_method" "method" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = var.modify_api_resource ? aws_api_gateway_resource.api_resource[0].id : var.parent_resource_id
+  http_method   = var.http_method
+  authorization = var.authorization
+  authorizer_id = var.authorization == "CUSTOM" ? var.authorizer_id : null
 }
 
-resource "aws_api_gateway_method_response" "options_method_response" {
-  count       = var.modify_api_resource ? 0 : 1
-  http_method = aws_api_gateway_method.options_method[0].http_method
+resource "aws_api_gateway_integration" "integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_method.method.resource_id
+  http_method             = aws_api_gateway_method.method.http_method
+  integration_http_method = var.integration_http_method
+  type                    = var.integration_type
+  uri                     = var.uri
+}
+
+# ---------------------------------------------------------
+# Method Response + Integration Response
+# ---------------------------------------------------------
+resource "aws_api_gateway_method_response" "method_response" {
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.method.resource_id
+  http_method = aws_api_gateway_method.method.http_method
   status_code = "200"
+
   response_models = {
     "application/json" = "Empty"
   }
 
   response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
-    "method.response.header.Access-Control-Allow-Credentials"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "integration_response" {
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.method.resource_id
+  http_method = aws_api_gateway_method.method.http_method
+  status_code = aws_api_gateway_method_response.method_response.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
+  }
+}
+
+# ---------------------------------------------------------
+# OPTIONS (CORS Preflight)
+# ---------------------------------------------------------
+resource "aws_api_gateway_method" "options" {
+  rest_api_id   = var.rest_api_id
+  resource_id   = aws_api_gateway_method.method.resource_id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_integration" {
+  rest_api_id             = var.rest_api_id
+  resource_id             = aws_api_gateway_method.options.resource_id
+  http_method             = aws_api_gateway_method.options.http_method
+  type                    = "MOCK"
+  integration_http_method = "OPTIONS"
+
+  request_templates = {
+    "application/json" = "{ \"statusCode\": 200 }"
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_response" {
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.options.resource_id
+  http_method = aws_api_gateway_method.options.http_method
+  status_code = "200"
+
+  response_models = {
+    "application/json" = "Empty"
   }
 
-  resource_id = local.resource_id
-  rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_method.options_method]
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+  }
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
-  count       = var.modify_api_resource ? 0 : 1
-  http_method = aws_api_gateway_method.options_method[0].http_method
-  status_code = 200
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.options.resource_id
+  http_method = aws_api_gateway_method.options.http_method
+  status_code = aws_api_gateway_method_response.options_response.status_code
 
   response_parameters = {
-    # Optional fallback if VTL fails
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'" 
+    "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
   }
-
-  response_templates = {
-    "application/json" = local.cors_vtl
-  }
-
-  resource_id = local.resource_id
-  rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_method.options_method, aws_api_gateway_method_response.options_method_response]
-}
-
-##### RESOURCE CALL #####
-resource "aws_api_gateway_method" "api_gateway_method" {
-  authorization        = var.authorization
-  authorizer_id        = var.authorizer_id
-  request_validator_id = var.request_validator_id
-  http_method          = var.http_method 
-  request_parameters   = var.method_request_parameters
-  request_models       = var.request_models
-  resource_id          = local.resource_id
-  rest_api_id          = var.rest_api_id
-  authorization_scopes = var.authorization_scopes
-}
-
-resource "aws_api_gateway_integration" "api_gateway_integration" {
-  http_method = aws_api_gateway_method.api_gateway_method.http_method 
-
-  # integration with backend service
-  type                    = var.integration_type
-  integration_http_method = var.integration_http_method
-  uri                     = var.uri
-  request_templates       = var.request_templates
-  credentials             = var.integration_credentials
-  passthrough_behavior    = var.integration_type == "AWS" ? "NEVER" : "WHEN_NO_TEMPLATES"
-
-  
-  content_handling        = "CONVERT_TO_TEXT"
-  resource_id             = local.resource_id
-  rest_api_id             = var.rest_api_id
-  depends_on              = [aws_api_gateway_method.api_gateway_method]
-}
-
-resource "aws_api_gateway_method_response" "api_gateway_method_response" {
-  http_method         = aws_api_gateway_method.api_gateway_method.http_method
-  status_code         = "200"
-  
-  response_models = {
-         "application/json" = var.response_model
-  }
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-    "method.response.header.Access-Control-Allow-Origin"  = true
-  }
-
-  resource_id = local.resource_id
-  rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_method.api_gateway_method]
-}
-
-resource "aws_api_gateway_integration_response" "api_gateway_integration_response" { 
-  http_method        = aws_api_gateway_method.api_gateway_method.http_method
-  status_code        = aws_api_gateway_method_response.api_gateway_method_response.status_code
-  response_templates = {
-    "application/json" = local.cors_vtl
-  }
-
-  resource_id = local.resource_id
-  rest_api_id = var.rest_api_id
-  depends_on  = [aws_api_gateway_integration.api_gateway_integration]
 }
