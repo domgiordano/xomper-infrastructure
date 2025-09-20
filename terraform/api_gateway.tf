@@ -52,7 +52,7 @@ module "get_player_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.player_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
-  allow_methods           = ["GET"]
+  allow_methods           = ["GET", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -77,7 +77,7 @@ module "post_player_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.player_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
-  allow_methods           = ["POST"]
+  allow_methods           = ["POST", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -107,7 +107,7 @@ module "post_login_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.login_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
-  allow_methods           = ["POST"]
+  allow_methods           = ["POST", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -136,7 +136,7 @@ module "get_user_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.user_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
-  allow_methods           = ["GET"]
+  allow_methods           = ["GET", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -161,7 +161,7 @@ module "post_user_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.user_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
-  allow_methods           = ["POST"]
+  allow_methods           = ["POST", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -190,7 +190,7 @@ module "get_league_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.league_get_resource.id
   modify_api_resource     = false
   http_method             = "GET"
-  allow_methods           = ["GET"]
+  allow_methods           = ["GET", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
@@ -215,7 +215,7 @@ module "post_league_data_endpoint" {
   parent_resource_id      = aws_api_gateway_resource.league_post_resource.id
   modify_api_resource     = false
   http_method             = "POST"
-  allow_methods           = ["POST"]
+  allow_methods           = ["POST", "OPTIONS"]
   allow_headers           = local.api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"

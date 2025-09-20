@@ -58,7 +58,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${var.http_method}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
   }
 
   response_templates = var.response_templates
@@ -119,6 +119,6 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${var.http_method}'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
   }
 }
