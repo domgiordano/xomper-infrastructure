@@ -13,7 +13,7 @@ resource "aws_cloudwatch_log_group" "api_log_group" {
     tags = merge(local.standard_tags, tomap({ "name"= "${var.app_name}-APIGW-Access-Logs"}))
 }
 
-## CHRON JOB - WRAPPED
+## CHRON JOB - Update Player Data
 resource "aws_cloudwatch_event_rule" "update_player_data_schedule" {
   name        ="${var.app_name}-update-player-data-schedule"
   description = "Trigger Update Player Data Lambda function every Tuesday at 6 AM ET"
