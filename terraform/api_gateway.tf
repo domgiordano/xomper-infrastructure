@@ -55,7 +55,7 @@ module "get_player_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.get_api_allow_headers
+  allow_headers           = local.post_api_allow_headers # GET ENDPOINT
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_player_data.invoke_arn
@@ -118,7 +118,7 @@ module "get_user_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.get_api_allow_headers
+  allow_headers           = local.post_api_allow_headers # GET ENDPOINT
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_user_data.invoke_arn
@@ -165,7 +165,7 @@ module "get_league_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.get_api_allow_headers
+  allow_headers           = local.post_api_allow_headers # GET ENDPOINT
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_league_data.invoke_arn
