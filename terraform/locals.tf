@@ -19,7 +19,8 @@ locals {
  }
 
  # API GW
- api_allow_headers = ["Authorization", "Content-Type", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token",  "Origin", "Accept", "Access-Control-Allow-Origin", "Accept-Language"]
+ get_api_allow_headers = ["Authorization", "Content-Type", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token",  "Origin", "Accept", "Access-Control-Allow-Origin", "Accept-Language"]
+ post_api_allow_headers = ["Authorization", "Content-Type", "X-Amz-Date", "X-Amz-Security-Token",  "Origin", "Accept", "Access-Control-Allow-Origin", "Accept-Language"]
  api_allow_origin  = "https://xomper.com" #,http://localhost:4200
 
 }
