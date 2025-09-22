@@ -75,11 +75,10 @@ resource "aws_api_gateway_method" "options" {
 }
 
 resource "aws_api_gateway_integration" "options_integration" {
-  rest_api_id            = var.rest_api_id
-  resource_id            = aws_api_gateway_method.options.resource_id
-  http_method            = aws_api_gateway_method.options.http_method
-  type                   = "MOCK"
-  integration_http_method = "OPTIONS"
+  rest_api_id  = var.rest_api_id
+  resource_id  = aws_api_gateway_method.options.resource_id
+  http_method  = aws_api_gateway_method.options.http_method
+  type         = "MOCK"
 
   request_templates = {
     "application/json" = "{ \"statusCode\": 200 }"
@@ -117,4 +116,6 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
     "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
   }
+
+  depends_on = [aws_api_gateway_integration.options_integration]
 }
