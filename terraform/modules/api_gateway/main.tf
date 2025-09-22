@@ -1,5 +1,5 @@
 # ---------------------------------------------------------
-# API Gateway Resource (optional)
+# Resource (optional)
 # ---------------------------------------------------------
 resource "aws_api_gateway_resource" "api_resource" {
   count       = var.modify_api_resource ? 1 : 0
@@ -9,7 +9,7 @@ resource "aws_api_gateway_resource" "api_resource" {
 }
 
 # ---------------------------------------------------------
-# Main Method (GET/POST)
+# Method (GET/POST)
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "method" {
   rest_api_id   = var.rest_api_id
@@ -19,6 +19,9 @@ resource "aws_api_gateway_method" "method" {
   authorizer_id = var.authorization == "CUSTOM" ? var.authorizer_id : null
 }
 
+# ---------------------------------------------------------
+# Integration
+# ---------------------------------------------------------
 resource "aws_api_gateway_integration" "integration" {
   rest_api_id             = var.rest_api_id
   resource_id             = aws_api_gateway_method.method.resource_id
@@ -32,11 +35,14 @@ resource "aws_api_gateway_integration" "integration" {
   content_handling        = "CONVERT_TO_TEXT"
 }
 
+# ---------------------------------------------------------
+# Method Response (CORS enabled)
+# ---------------------------------------------------------
 resource "aws_api_gateway_method_response" "method_response" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = aws_api_gateway_method.method.resource_id
-  http_method   = aws_api_gateway_method.method.http_method
-  status_code   = var.response_http_status_code
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.method.resource_id
+  http_method = aws_api_gateway_method.method.http_method
+  status_code = var.response_http_status_code
 
   response_models = {
     "application/json" = var.response_model
@@ -49,25 +55,33 @@ resource "aws_api_gateway_method_response" "method_response" {
   }
 }
 
+# ---------------------------------------------------------
+# Integration Response (CORS enabled)
+# ---------------------------------------------------------
 resource "aws_api_gateway_integration_response" "integration_response" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = aws_api_gateway_method.method.resource_id
-  http_method   = aws_api_gateway_method.method.http_method
-  status_code   = aws_api_gateway_method_response.method_response.status_code
+  rest_api_id = var.rest_api_id
+  resource_id = aws_api_gateway_method.method.resource_id
+  http_method = aws_api_gateway_method.method.http_method
+  status_code = aws_api_gateway_method_response.method_response.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,Accept,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 
-  response_templates = var.response_templates
+  response_templates = {
+    "application/json" = ""
+  }
+
+  depends_on = [aws_api_gateway_integration.integration]
 }
 
 # ---------------------------------------------------------
-# OPTIONS Preflight for this Method
+# OPTIONS Method (for CORS preflight)
 # ---------------------------------------------------------
 resource "aws_api_gateway_method" "options" {
+  count         = var.enable_cors ? 1 : 0
   rest_api_id   = var.rest_api_id
   resource_id   = local.resource_id
   http_method   = "OPTIONS"
@@ -75,47 +89,51 @@ resource "aws_api_gateway_method" "options" {
 }
 
 resource "aws_api_gateway_integration" "options_integration" {
-  rest_api_id  = var.rest_api_id
-  resource_id  = aws_api_gateway_method.options.resource_id
-  http_method  = aws_api_gateway_method.options.http_method
-  type         = "MOCK"
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = var.rest_api_id
+  resource_id = local.resource_id
+  http_method = "OPTIONS"
+  type        = "MOCK"
 
   request_templates = {
-    "application/json" = "{ \"statusCode\": 200 }"
+    "application/json" = "{\"statusCode\": 200}"
   }
-
-  passthrough_behavior = "WHEN_NO_MATCH"
-  content_handling     = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_method_response" "options_response" {
+  count       = var.enable_cors ? 1 : 0
   rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.options.resource_id
-  http_method = aws_api_gateway_method.options.http_method
+  resource_id = local.resource_id
+  http_method = "OPTIONS"
   status_code = "200"
-
-  response_models = {
-    "application/json" = "Empty"
-  }
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
     "method.response.header.Access-Control-Allow-Methods" = true
   }
+
+  response_models = {
+    "application/json" = ""
+  }
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
+  count       = var.enable_cors ? 1 : 0
   rest_api_id = var.rest_api_id
-  resource_id = aws_api_gateway_method.options.resource_id
-  http_method = aws_api_gateway_method.options.http_method
-  status_code = aws_api_gateway_method_response.options_response.status_code
+  resource_id = local.resource_id
+  http_method = "OPTIONS"
+  status_code = "200"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'${var.allow_origin}'"
-    "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
-    "method.response.header.Access-Control-Allow-Methods" = "'${join(",", var.allow_methods)}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,Authorization,Accept,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,GET,POST'"
   }
 
-  depends_on = [aws_api_gateway_integration.options_integration]
+  response_templates = {
+    "application/json" = ""
+  }
+
+  depends_on = [aws_api_gateway_integration.options_integration[0]]
 }
