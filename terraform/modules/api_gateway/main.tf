@@ -113,6 +113,10 @@ resource "aws_api_gateway_method_response" "options_response" {
     "method.response.header.Access-Control-Allow-Methods" = true
   }
 
+  response_models = {
+    "application/json" = "Empty"
+  }
+
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
