@@ -55,7 +55,7 @@ module "get_player_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.get_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_player_data.invoke_arn
@@ -73,7 +73,7 @@ module "post_player_data_endpoint" {
   path_part               = "update"
   http_method             = "POST"
   allow_methods           = ["POST", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.post_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.update_player_data.invoke_arn
@@ -100,7 +100,7 @@ module "post_login_user_endpoint" {
   path_part               = "login"
   http_method             = "POST"
   allow_methods           = ["POST", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.post_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.user_login.invoke_arn
@@ -118,7 +118,7 @@ module "get_user_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.get_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_user_data.invoke_arn
@@ -136,7 +136,7 @@ module "post_user_data_endpoint" {
   path_part               = "update"
   http_method             = "POST"
   allow_methods           = ["POST", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.post_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.update_user_data.invoke_arn
@@ -165,7 +165,7 @@ module "get_league_data_endpoint" {
   path_part               = "data"
   http_method             = "GET"
   allow_methods           = ["GET", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.get_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.get_league_data.invoke_arn
@@ -183,7 +183,7 @@ module "post_league_data_endpoint" {
   path_part               = "update"
   http_method             = "POST"
   allow_methods           = ["POST", "OPTIONS"]
-  allow_headers           = local.api_allow_headers
+  allow_headers           = local.post_api_allow_headers
   integration_type        = "AWS_PROXY"
   integration_http_method = "POST"
   uri                     = aws_lambda_function.update_league_data.invoke_arn
