@@ -234,4 +234,28 @@ resource "aws_api_gateway_stage" "api_gateway_stage" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   stage_name    = "prod"
   tags          = local.standard_tags
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_log_group.arn
+    format          = "$context.identity.sourceIp $context.identity.caller  $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId $context.extendedRequestId"
+  }
+}
+
+#*************************
+# Logging
+#*************************
+resource "aws_api_gateway_method_settings" "method_settings" {
+  rest_api_id = aws_api_gateway_rest_api.api_gateway.id
+  stage_name  = aws_api_gateway_stage.api_gateway_stage.stage_name
+  method_path = "*/*"
+  settings {
+    metrics_enabled = true
+    data_trace_enabled = true
+    logging_level = "INFO"
+
+    throttling_rate_limit = 100
+    throttling_burst_limit = 50
+  }
+
+  depends_on = [aws_api_gateway_stage.api_gateway_stage]
 }
