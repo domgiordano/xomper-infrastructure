@@ -1,3 +1,8 @@
+
+# ---------------------------------------------------------
+# API VARS
+# ---------------------------------------------------------
+
 variable "rest_api_id" {
   description = "REST API ID"
   type        = string
@@ -15,36 +20,21 @@ variable "path_part" {
 }
 
 variable "modify_api_resource" {
-  description = <<EOT
-If true, create a new API resource under parent_resource_id + path_part.
-If false, reuse the existing parent_resource_id directly.
-EOT
-  type    = bool
-  default = false
-}
-
-variable "http_method" {
-  description = "HTTP method associated with the resource request"
-  type        = string
-  default     = "ANY"
+  description = "Use true if adding a new HTTP verb on an existing API resource. If false, parent_resource_id will be used as parent and path_part is required"
+  type        = bool
+  default     = false
 }
 
 variable "authorization" {
-  description = "Authorization type for the method. Valid values: NONE, CUSTOM, AWS_IAM, COGNITO_USER_POOLS"
+  description = "Type of authorization used for method. NONE, CUSTOM, AWS_IAM, and COGNITO_USER_POOLS are valid values."
   type        = string
   default     = "NONE"
 }
 
 variable "authorizer_id" {
-  description = "Authorizer ID to be used when authorization is CUSTOM or COGNITO_USER_POOLS."
+  description = "The authorizer id to be used when authorization is CUSTOM or COGNITO_USER_POOLS."
   type        = string
   default     = ""
-}
-
-variable "authorization_scopes" {
-  description = "Authorization scopes when using COGNITO_USER_POOLS."
-  type        = list(string)
-  default     = []
 }
 
 variable "request_validator_id" {
@@ -54,109 +44,113 @@ variable "request_validator_id" {
 }
 
 variable "request_models" {
-  description = "Map of request models (key = content type, value = model)."
+  description = "A map of request models used for request's content type, where key is the content type and value is the model."
   type        = map(string)
   default     = {}
 }
 
 variable "request_templates" {
-  description = "Map of request templates (key = content type, value = template)."
+  description = "A map of request templates used for request's content type, where key is the content type and value is the model."
   type        = map(string)
   default     = {}
 }
 
+variable "http_method" {
+  description = "Http method associated with the resource request"
+  type        = string
+  default     = "ANY"
+}
+
 variable "method_request_parameters" {
-  description = "Request parameters (path/query) for the method."
+  description = "Path or query parameters associated with resource"
   type        = map(bool)
   default     = {}
 }
 
-variable "integration_type" {
-  description = "Integration type: AWS, AWS_PROXY, HTTP, HTTP_PROXY, MOCK."
-  type        = string
-}
-
 variable "integration_http_method" {
-  description = "Integration HTTP method (required for AWS, AWS_PROXY, HTTP, HTTP_PROXY). Lambdas require POST."
+  description = "Integration HTTP method specifying how API Gateway will interact with backend. Required for AWS, AWS_PROXY, HTTP, or HTTP_PROXY. Lambdas may only be invoked via POST"
   type        = string
   default     = ""
 }
 
+variable "integration_type" {
+  description = "Resource integration type. Values values are HTTP, MOCK, AWS, AWS_PROXY, HTTP_PROXY"
+  type        = string
+}
+
 variable "integration_credentials" {
-  description = "For AWS integrations: IAM role ARN assumed by API Gateway."
+  description = "For API Integration resource - if type AWS, need role ARN to call AWS resource"
   type        = string
   default     = null
 }
 
-variable "integration_request_parameters" {
-  description = "Integration request parameters (map of request parameters)."
-  type        = map(string)
-  default     = {}
-}
-
 variable "uri" {
-  description = "Integration URI (Lambda ARN, HTTP endpoint, or AWS service ARN)."
+  description = "Input's URI. Required if type is AWS, AWS_PROXY, HTTP, or HTTP_PROXY"
   type        = string
   default     = ""
 }
 
+variable "integration_request_parameters" {
+  description = "Integration parameters for the request"
+  type        = map(string)
+  default     = {}
+}
+
 variable "response_http_status_code" {
-  description = "Default HTTP status code for method response."
+  description = "The HTTP status code"
   type        = string
   default     = "200"
 }
 
 variable "response_model" {
-  description = "Response model name (default = Empty)."
+  description = "response model"
   type        = string
   default     = "Empty"
 }
 
 variable "response_parameters" {
-  description = "Additional response parameters (map of response headers)."
+  description = "A map of response parameters that can be sent to the caller"
   type        = map(string)
   default     = {}
 }
 
 variable "response_templates" {
-  description = "Integration response templates (key = content type, value = template)."
+  description = "A map specifying the templates used to transform the integration response body"
   type        = map(string)
-  default     = {
-    "application/json" = ""
-  }
+  default     = { "application/json" = "" }  
 }
 
-# -------------------
-# CORS settings
-# -------------------
-variable "enable_cors" {
-  description = "Whether to create OPTIONS method for CORS"
-  type        = bool
-  default     = true
-}
 variable "allow_headers" {
-  description = "CORS: Access-Control-Allow-Headers values."
+  description = "List of Access-Control-Allow-Headers headers"
   type        = list(string)
   default     = ["Authorization", "Content-Type", "X-Amz-Date", "X-Amz-Security-Token", "X-Api-Key"]
 }
 
 variable "allow_methods" {
-  description = "CORS: Access-Control-Allow-Methods values."
+  description = "List of Access-Control-Allow-Methods headers"
   type        = list(string)
-  default     = ["OPTIONS", "HEAD", "GET", "POST", "PUT"]
+  default     = ["OPTIONS", "HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"]
 }
 
 variable "allow_origin" {
-  description = "CORS: Allowed origin(s). Use '*' or a specific domain. (You can extend to list later if needed)."
+  description = "Comma-delimited string of allowed origins for CORS. Default to '*'"
   type        = string
   default     = "*"
 }
 
-# -------------------
-# Tags
-# -------------------
+variable "authorization_scopes" {
+  description = "auth scopes"
+  type        = list(string)
+  default     = []
+}
+
 variable "standard_tags" {
-  description = "Standard tags for resources"
-  type        = map(string)
-  default     = {}
+  description = "Standard Tags for Resources"
+  type        = map
+}
+
+variable "api_key_required" {
+  description = "Specify if the method requires an API key"
+  type        = bool
+  default     = false
 }
