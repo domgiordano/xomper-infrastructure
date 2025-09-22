@@ -51,7 +51,7 @@ resource "aws_api_gateway_method_response" "options_method_response" {
 resource "aws_api_gateway_integration_response" "options_integration_response" {
   count       = var.modify_api_resource ? 0 : 1
   http_method = aws_api_gateway_method.options_method[0].http_method
-  status_code = 200
+  status_code = "200"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'${join(",", var.allow_headers)}'"
@@ -106,7 +106,7 @@ resource "aws_api_gateway_method_response" "api_gateway_method_response" {
   status_code         = "200"
   
   response_models = {
-         "application/json" = var.response_model
+    "application/json" = var.response_model
   }
 
   response_parameters = {
