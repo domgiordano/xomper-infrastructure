@@ -73,12 +73,23 @@ variable "enable_cloudfront_cache" {
 # Lambda
 variable "lambda_runtime" {
   type = string
-  default = "python3.10"
+  default = "python3.13"
 }
 
 variable "lambda_trace_mode"{
   type = string
   default = "Active"
+}
+variable "lambda_memory_size" {
+  description = "Memory size for Lambda functions in MB"
+  type        = number
+  default     = 1024
+}
+
+variable "lambda_timeout" {
+  description = "Timeout for Lambda functions in seconds"
+  type        = number
+  default     = 900
 }
 
 #API
@@ -90,4 +101,11 @@ variable  api_access_token {
 variable "api_secret_key" {
   description = "API Secret Key for FE / BE to use"
   sensitive = true
+}
+
+# Email Service
+variable "from_email" {
+  description = "Email address to send from"
+  type        = string
+  default     = "noreply@xomper.com"
 }
