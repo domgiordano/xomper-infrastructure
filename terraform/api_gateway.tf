@@ -61,18 +61,9 @@ resource "aws_api_gateway_deployment" "api_deploy" {
    create_before_destroy = true
  }
   depends_on = [
-    aws_api_gateway_resource.wrapped_resource,
-    aws_api_gateway_resource.user_resource,
-    aws_api_gateway_resource.release_radar_resource,
-    aws_api_gateway_resource.friends_resource,
-    aws_api_gateway_resource.groups_resource,
+    aws_api_gateway_resource.email_resource,
 
-    module.wrapped_endpoints,
-    module.user_endpoints,
-    module.release_radar_endpoints,
-    module.friends_endpoints,
-    module.ratings_endpoints,
-    module.groups_endpoints
+    module.email_endpoints
   ]
 }
 
