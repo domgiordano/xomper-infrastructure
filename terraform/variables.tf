@@ -103,6 +103,18 @@ variable "api_secret_key" {
   sensitive = true
 }
 
+# SUPABASE
+variable "supabase_url" {
+  description = "Supabase Project URL"
+  type        = string
+  sensitive   = true
+}
+variable "supabase_anon_key" {
+  description = "Supabase Anon Key"
+  type        = string
+  sensitive   = true
+}
+
 # Email Service
 variable "from_email" {
   description = "Email address to send from"
