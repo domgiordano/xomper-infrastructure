@@ -217,6 +217,14 @@ data "aws_iam_policy_document" "lambda_role_policy" {
       "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.web_app_account.account_id}:table/*/stream/*"
     ]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "lambda_role_policy" {
