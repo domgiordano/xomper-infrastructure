@@ -36,3 +36,19 @@ resource "aws_ssm_parameter" "api_id"{
     value       = aws_api_gateway_rest_api.api_gateway.id
     tags        = merge(local.standard_tags, tomap({"name" = "${var.app_name}-api-id"}))
 }
+
+#SUPABASE
+resource "aws_ssm_parameter" "api_supabase_url"{
+    name        = "/${var.app_name}/api/SUPABASE_URL"
+    description = "Supabase URL"
+    type        = "SecureString"
+    value       = var.supabase_url
+    tags        = merge(local.standard_tags, tomap({"name" = "${var.app_name}-api-supabase-url"}))
+}
+resource "aws_ssm_parameter" "api_supabase_anon_key"{
+    name        = "/${var.app_name}/api/SUPABASE_ANON_KEY"
+    description = "Supabase ANON key"
+    type        = "SecureString"
+    value       = var.supabase_anon_key
+    tags        = merge(local.standard_tags, tomap({"name" = "${var.app_name}-api-supabase-anon-key"}))
+}

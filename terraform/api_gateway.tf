@@ -114,7 +114,9 @@ resource "aws_api_gateway_gateway_response" "api_client_error_response" {
   }
   # CORS
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'${join(",", local.api_allow_headers)}'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'"
   }
 
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
