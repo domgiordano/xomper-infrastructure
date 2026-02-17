@@ -1,28 +1,28 @@
 locals {
   email_lambdas = [
     {
-        name = "taxi"
-        description = "Email for taxi steal event"
-        path_part = "taxi"
-        http_method = "POST"
+      name        = "taxi"
+      description = "Email for taxi steal event"
+      path_part   = "taxi"
+      http_method = "POST"
     },
     {
-        name = "rule-proposal"
-        description = "New Rule Proposal"
-        path_part = "rule-proposal"
-        http_method = "POST"
+      name        = "rule-proposal"
+      description = "New Rule Proposal"
+      path_part   = "rule-proposal"
+      http_method = "POST"
     },
     {
-        name = "rule-accept"
-        description = "New Rule Accepted"
-        path_part = "rule-accept"
-        http_method = "POST"
+      name        = "rule-accept"
+      description = "New Rule Accepted"
+      path_part   = "rule-accept"
+      http_method = "POST"
     },
     {
-        name = "rule-deny"
-        description = "New Rule denied"
-        path_part = "rule-deny"
-        http_method = "POST"
+      name        = "rule-deny"
+      description = "New Rule denied"
+      path_part   = "rule-deny"
+      http_method = "POST"
     }
   ]
 }

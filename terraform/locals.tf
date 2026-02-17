@@ -4,20 +4,20 @@ locals {
   # Get the AWS product account id
   web_app_account_id = data.aws_caller_identity.web_app_account.account_id
   standard_tags = {
-      "source" = "terraform",
-      "app_name" = var.app_name
+    "source"   = "terraform",
+    "app_name" = var.app_name
   }
 
- # LAMBDAS
- lambda_variables = {
-   APP_NAME = var.app_name
-   DYNAMODB_KMS_ALIAS = aws_kms_alias.xomper_dynamodb.name
-   AWS_ACCOUNT_ID = data.aws_caller_identity.web_app_account.account_id
-   FROM_EMAIL                       = var.from_email 
- }
+  # LAMBDAS
+  lambda_variables = {
+    APP_NAME           = var.app_name
+    DYNAMODB_KMS_ALIAS = aws_kms_alias.xomper_dynamodb.name
+    AWS_ACCOUNT_ID     = data.aws_caller_identity.web_app_account.account_id
+    FROM_EMAIL         = var.from_email
+  }
 
- # API GW
- # API Gateway allowed headers
+  # API GW
+  # API Gateway allowed headers
   api_allow_headers = [
     "Authorization",
     "Content-Type",

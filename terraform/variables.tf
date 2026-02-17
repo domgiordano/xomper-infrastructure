@@ -1,31 +1,25 @@
 variable "app_name" {
   description = "The name for the application."
-  default = "xomper"
+  default     = "xomper"
 }
 
 variable "access_key" {
   description = "AWS access key."
-  sensitive = true
+  sensitive   = true
 }
 
 variable "secret_key" {
   description = "AWS secret key."
-  sensitive = true
+  sensitive   = true
 }
 
-variable "domain_suffix"{
-    description = "Suffix for the domain of the app."
-    default = ".com"
+variable "domain_suffix" {
+  description = "Suffix for the domain of the app."
+  default     = ".com"
 }
 
 variable "aws_region" {
   default = "us-east-1"
-}
-
-variable "cloudfront_origin_id" {
-  type        = string
-  description = "unique origin id for cloudfront distribution"
-  default = "xomperWeb"
 }
 
 variable "cloudfront_origin_path" {
@@ -38,12 +32,6 @@ variable "us_canada_only" {
   type        = bool
   default     = true
   description = "If a georestriction should be placed on the distribution to only provide access to the US and Canada"
-}
-
-variable "custom_record_name" {
-  type        = string
-  default     = ""
-  description = "custom domain name to use, if one is desired."
 }
 
 variable "custom_error_response_page_path" {
@@ -72,12 +60,12 @@ variable "enable_cloudfront_cache" {
 }
 # Lambda
 variable "lambda_runtime" {
-  type = string
+  type    = string
   default = "python3.13"
 }
 
-variable "lambda_trace_mode"{
-  type = string
+variable "lambda_trace_mode" {
+  type    = string
   default = "Active"
 }
 variable "lambda_memory_size" {
@@ -93,14 +81,14 @@ variable "lambda_timeout" {
 }
 
 #API
-variable  api_access_token {
+variable "api_access_token" {
   description = "API access token"
   sensitive   = true
 }
 
 variable "api_secret_key" {
   description = "API Secret Key for FE / BE to use"
-  sensitive = true
+  sensitive   = true
 }
 
 # SUPABASE

@@ -18,7 +18,7 @@ resource "aws_iam_role" "lambda_role" {
 
 data "aws_iam_policy_document" "lambda_role_policy" {
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "ec2:DescribeNetworkInterfaces",
       "ec2:CreateNetworkInterface",
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     resources = ["*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "s3:PutObject",
       "s3:GetObjectAcl",
@@ -44,10 +44,13 @@ data "aws_iam_policy_document" "lambda_role_policy" {
       "s3:DeleteObject",
       "s3:DeleteObjectVersion"
     ]
-    resources = ["*"]
+    resources = [
+      "${module.web.s3_bucket_arn}",
+      "${module.web.s3_bucket_arn}/*"
+    ]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "ssm:PutParameters",
       "ssm:PutParameter",
@@ -61,7 +64,7 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     resources = ["*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "secretsmanager:GetResourcePolicy",
       "secretsmanager:GetSecretValue",
@@ -75,14 +78,14 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     resources = ["arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.web_app_account.account_id}:secret:${var.app_name}-*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "secretsmanager:GetRandomPassword"
     ]
     resources = ["*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "logs:ListLogDeliveries",
       "logs:DescribeResourcePolicies",
@@ -101,7 +104,7 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     resources = ["arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.web_app_account.account_id}:log-group:/aws/lambda/${var.app_name}*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "kms:ListAliases",
       "kms:ListKeyPolicies",
@@ -162,7 +165,7 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     ]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "lambda:InvokeFunction",
       "lambda:GetFunction",
@@ -176,14 +179,14 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     ]
   }
   statement {
-    effect    = "Allow"
-    actions   = ["execute-api:Invoke"]
+    effect  = "Allow"
+    actions = ["execute-api:Invoke"]
     resources = [
-      "arn:aws:execute-api:${var.aws_region}:${data.aws_caller_identity.web_app_account.account_id}:${aws_api_gateway_rest_api.api_gateway.id}/*/*/*"
+      "arn:aws:execute-api:${var.aws_region}:${data.aws_caller_identity.web_app_account.account_id}:${module.api.rest_api_id}/*/*/*"
     ]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "xray:PutTraceSegments",
       "xray:PutTelemetryRecords",
@@ -194,7 +197,7 @@ data "aws_iam_policy_document" "lambda_role_policy" {
     resources = ["*"]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "dynamodb:BatchGetItem",
       "dynamodb:GetItem",
