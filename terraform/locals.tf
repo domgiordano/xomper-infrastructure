@@ -1,5 +1,6 @@
 locals {
-  domain_name = "${var.app_name}${var.domain_suffix}"
+  domain_name     = "${var.app_name}${var.domain_suffix}"
+  api_domain_name = "api.${local.domain_name}"
 
   # Get the AWS product account id
   web_app_account_id = data.aws_caller_identity.web_app_account.account_id

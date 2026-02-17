@@ -15,7 +15,7 @@ variable "secret_key" {
 
 variable "domain_suffix" {
   description = "Suffix for the domain of the app."
-  default     = ".com"
+  default     = ".xomware.com"
 }
 
 variable "aws_region" {
@@ -107,5 +107,5 @@ variable "supabase_anon_key" {
 variable "from_email" {
   description = "Email address to send from"
   type        = string
-  default     = "noreply@xomper.com"
+  default     = "noreply@xomper.xomware.com"
 }
